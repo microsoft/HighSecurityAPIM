@@ -106,7 +106,8 @@ This NSG will also need to restrict outbound access. The best approach here is t
 •	Any private network ranges and ports to which APIM will open outbound connections.
    
 An application firewall in an adjacent subnet or VNet to provide inbound and outbound protection. 
-Symmetric Routing for Inbound APIM Control Plane Traffic
+
+# Symmetric Routing for Inbound APIM Control Plane Traffic
 
 As we learned, the APIM control plane will be making inbound calls to your APIM delegated subnet, targeting a special management IP hosted by the fabric. This public endpoint will then forward control plane connection requests to the private IPs of your APIM role instances. In order to ensure that responses symmetrically map back to these inbound source IPs, you will need to create a route table and build a set of UDRs to steer traffic back to Azure by setting the destination of these host routes to “Internet”.  The host routes you will need to create are as follows:
 
@@ -136,10 +137,11 @@ As we learned, the APIM control plane will be making inbound calls to your APIM 
 
  
 A Word About the Future of APIM Control Plane
+
 Today the APIM control plane uses the four endpoints above for high availability. This range will grow in the future as Azure continues to grow. In the future, is possible that some control plane functions for your APIM deployment will dynamically shift to a new IP which is not listed above. If this happens, your first motion will be to open a support ticket and add the new host routes in to your Route Table.  Any disturbance to your control plane will not impact your other planes, and your end-user traffic will not be affected. 
 To address this issue, Microsoft Azure is developing a special route tag that will dynamically support all control plane targets.  At the time of this writing, this is currently in development, but this white sheet will be updated when this feature is in production. 
 
-Security for Inbound APIM Traffic
+# Security for Inbound APIM Traffic
 When planning your high security deployment, it is essential to understand all the inbound sources and channels so that you can implement your routes, and NSGs, and firewall rules for maximum security. Here are the inbound services that will be calling to your APIM subnet:
 
  
