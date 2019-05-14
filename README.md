@@ -75,34 +75,35 @@ The best-practice implementation of the high security APIM architecture is provi
 
 1.	An APIM service deployed in a delegated subnet.
 
-a.	Custom DNS will need to be configured prior to APIM VNet Injection 
+ a.	Custom DNS will need to be configured prior to APIM VNet Injection 
 
-b.	The APIM Gateway should be configured in Internal mode.
+ b.	The APIM Gateway should be configured in Internal mode.
 
 2.	A Routing Table applied to the APIM delegated subnet with these configurations:
 
-a.	A set of User-defined routes (UDRs) that steer egress control plane traffic to the Azure backbone using the “Internet” tag. 
+ a.	A set of User-defined routes (UDRs) that steer egress control plane traffic to the Azure backbone using the “Internet” tag. 
 
-b.	A set of User-defined routes (UDRs) that steer egress management plane traffic into a private firewall IP using the “Virtual Network Appliance” tag.  
+ b.	A set of User-defined routes (UDRs) that steer egress management plane traffic into a private firewall IP using the “Virtual Network Appliance” tag.  
 
-c.	A set of User-defined routes that steer egress data plane management traffic into the firewall using the “Virtual Network Appliance” tag. 
+ c.	A set of User-defined routes that steer egress data plane management traffic into the firewall using the “Virtual Network Appliance” tag. 
 
-d.	A User-defined route that points the default gateway of the subnet (0.0.0.0/0) to the firewall using the “Virtual Network Appliance” tag, if your firewall resides in your VNet.  Else, this route will arrive via BGP into the APIM subnet over ExpressRoute or VPN. 
+ d.	A User-defined route that points the default gateway of the subnet (0.0.0.0/0) to the firewall using the “Virtual Network Appliance” tag, if your firewall resides in your VNet.  Else, this route will arrive via BGP into the APIM subnet over ExpressRoute or VPN. 
 
 3.	A Network Security Group (NSG) which will curtail inbound access. The best approach is to deny all inbound traffic, from both the Internet and the VNet, then white list the following groups:
 
-a.	Control plane, management plane, and data plane channels (discussed below in detail)
-b.	The APIM subnet itself for internal communication
+ a.	Control plane, management plane, and data plane channels (discussed below in detail)
 
-c.	Any private network ranges and ports that will be opening inbound connections to APIM. 
+ b.	The APIM subnet itself for internal communication
+
+ c.	Any private network ranges and ports that will be opening inbound connections to APIM. 
 
 4.	This NSG will also need to restrict outbound access. The best approach here is to deny all outbound traffic, to both the Internet and to the VNet, then white list the following groups:
 
-a.	Control plane, management plane, and data plane channels (discussed below in detail)
+ a.	Control plane, management plane, and data plane channels (discussed below in detail)
 
-b.	The APIM subnet itself for internal communication.
+ b.	The APIM subnet itself for internal communication.
 
-c.	Any private network ranges and ports to which APIM will open outbound connections.
+ c.	Any private network ranges and ports to which APIM will open outbound connections.
    
 5.	An application firewall in an adjacent subnet or VNet to provide inbound and outbound protection. 
 Symmetric Routing for Inbound APIM Control Plane Traffic
