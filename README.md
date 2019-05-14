@@ -2,7 +2,7 @@
 
 # Overview
 
-Azure API Management (APIM) is a Cloud-based PaaS service that helps organizations publish APIs to external, partner, and internal developers to unlock the potential of their data and services. It includes a built-in gateway service that brokers network API calls to your backend so that you may enforce user-based access, take advantage of quotas and rate limiting, cache responses, and more.  A great overview of APIM on azure.com is here. 
+! Azure API Management (APIM) is a Cloud-based PaaS service that helps organizations publish APIs to external, partner, and internal developers to unlock the potential of their data and services. It includes a built-in gateway service that brokers network API calls to your backend so that you may enforce user-based access, take advantage of quotas and rate limiting, cache responses, and more.  A great overview of APIM on azure.com is here. 
 If you are reading this whitepaper, it is probably because you are an IT Pro in need of guidance on how to deploy APIM in Azure to meet your high security data requirements.  Else you are just interested in what is possible with APIM and want to know more. Either way, this white paper is for you. Here, we will discuss exactly what happens when you deploy APIM inside an Azure VNet, and how to take your security footprint to the next level by using firewalls, Network Security Groups (NSGs), User Defined Routes (UDRs), and more. 
 
 # APIM and VNet Injection
