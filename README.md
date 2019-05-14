@@ -48,24 +48,29 @@ A Word about the Backend
 A lot of Azure PaaS platforms use both Azure Storage and Azure SQL services to get the job done across all three planes, or some combination of them.  The classification of this backend traffic will need to be performed independently for each PaaS service that supports VNet Injection. For APIM, we will consider traffic to Azure Storage and Azure SQL as both control plane and data plane traffic, as the APIM reads and writes both types of data here. The bulk of the transfer does belong to data plane, however, so from a compliance or DLP perspective, APIM storage and SQL needs to fall into this same regulatory stance. 
 
 # Internal vs External APIM 
-When you deploy APIM into your VNet, you will have the choice of placing your APIM Gateway behind a Public Azure Load Balancer IP (External), or behind an Internal Azure Load Balancer IP (Internal). The setting that actually determines this outcome is found under the “Virtual Network” settings of your APIM. You will see a choice of “External” or “Internal” for your VNet deployment.  In either case, the actual APIM nodes themselves are build using private IPs from the subnet. 
-Because high-security architectures often require moving endpoints to private network space and placing a firewall in front of the service, the “Internal” VNet mode is the ideal choice here.  For hybrid motions, this Internal Gateway IP will be accessible over VPN and or ExpressRoute, such that on-prem clients do not have to use the Internet to contact your APIM Gateway.  
-The Internal APIM deployment guide discusses in detail what will happen to your APIM management plane when you move in behind a private IP in your VNet.  The next section will dive into this in more detail. It is crucial that you read this solution carefully so you know how to design and access your APIM management plane. 
+When you deploy APIM into your VNet (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet), you will have the choice of placing your APIM Gateway behind a Public Azure Load Balancer IP (External), or behind an Internal Azure Load Balancer IP (Internal). The setting that actually determines this outcome is found under the “Virtual Network” settings of your APIM. You will see a choice of “External” or “Internal” for your VNet deployment.  In either case, the actual APIM nodes themselves are build using private IPs from the subnet. 
+Because high-security architectures often require moving endpoints to private network space and placing a firewall in front of the service, the “Internal” VNet mode is the ideal choice here.  For hybrid motions, this Internal Gateway IP will be accessible over VPN and or ExpressRoute, such that on-prem clients do not have to use the Internet to contact your APIM Gateway. 
 
-
+The Internal APIM deployment (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#--routing) guide discusses in detail what will happen to your APIM management plane when you move in behind a private IP in your VNet.  The next section will dive into this in more detail. It is crucial that you read this solution carefully so you know how to design and access your APIM management plane. 
 
 Management endpoints with Internal VNet mode.
 As discussed above, the management plane is how admins and developers come in to configure and view your service.  In addition to the Azure and Developer portals, the following special management fqdns will need to resolve to the APIM private gateway IP, which will be hosting these services:
+
 •	<ServiceName>.azure-api.net
+ 
 •	<ServiceName>.portal.azure-api.net
+ 
 •	<ServiceName>.management.azure-api.net
+ 
 •	<ServiceName>.scm.azure-api.net 
  
 You will need to set up a custom DNS solution for these four fdqns such that the A record for each of these hostnames will resolve to the private IP address of the APIM Gateway. The hostnames above are required in the HTTP request, such that the client will pass the correct hostname value to the APIM Gateway to forward to the right backend service. This solution does a great job of outlining how to set up custom DNS in Azure.  Note you should set up the custom DNS service prior to deploying APIM into the VNet, so your management calls work correctly post-deployment.
+
 Per the linked Internal APIM deployment guide, there are two other strategies you can use to simplify your DNS configuration:
 1.	Change the DNS fqdns of your APIM service to a domain name of your choice, e.g., change “contoso.azure-api.net” to “contoso.contoso-api.net”.
 2.	Set up a VM jumpbox in your VNet and modify the /etc/hosts record for these fqdns such that they resolve to the private IP of your APIM service.
-The Essential Architecture
+
+# The Essential Architecture
 The best-practice implementation of the high security APIM architecture is provided below. It is provided as a framework to discuss the full inbound and outbound requirements in the following sections. 
 1.	An APIM service deployed in a delegated subnet.
 a.	Custom DNS will need to be configured prior to APIM VNet Injection 
