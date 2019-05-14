@@ -143,38 +143,56 @@ To address this issue, Microsoft Azure is developing a special route tag that wi
 
 # Security for Inbound APIM Traffic
 When planning your high security deployment, it is essential to understand all the inbound sources and channels so that you can implement your routes, and NSGs, and firewall rules for maximum security. Here are the inbound services that will be calling to your APIM subnet:
-
- 
  
 Let’s map the “Purpose” column to the three traffic types we have discussed for a better understanding of how to fine tune your NSG:
 
 1.	Client communication to API Management
-a.	This traffic will be both data plane and management plane calls and will hit the private IP address of your APIM Gateway (Internal VNet mode). 
-b.	The source IP can be restricted to the private NAT IP of your WAF or firewall.  The key idea here is that your firewall sits in front of APIM, and will forward calls from its trusted interface to your APIM Gateway. 
-c.	The destination IP range can be restricted to subnet mask of your APIM Gateway.
-d.	The source port range needs to be “*”
-e.	The destination ports need to be 80 and 443
+
+    - This traffic will be both data plane and management plane calls and will hit the private IP address of your APIM Gateway (Internal VNet mode). 
+    
+    - The source IP can be restricted to the private NAT IP of your WAF or firewall.  The key idea here is that your firewall sits in front of APIM, and will forward calls from its trusted interface to your APIM Gateway. 
+    
+    - The destination IP range can be restricted to subnet mask of your APIM Gateway.
+    
+    - The source port range needs to be “*”
+    
+    - The destination ports need to be 80 and 443
 
 2.	Management endpoint for Azure portal and Powershell
-a.	This traffic will be control plane only. Do not be confused by the term “management” here. 
-b.	The source IP range can be restricted to the “ApiManagement” NSG service tag
-c.	The destination IP range can be restricted to the subnet mask of your APIM Gateway.
-d.	The source port range will need to be “*”
-e.	The destination port range will need to the 3443
+
+    - This traffic will be control plane only. Do not be confused by the term “management” here. 
+    
+    - The source IP range can be restricted to the “ApiManagement” NSG service tag
+    
+    - The destination IP range can be restricted to the subnet mask of your APIM Gateway.
+    
+    - The source port range will need to be “*”
+    
+    - The destination port range will need to the 3443
 
 3.	Access Azure Cache for Redis Instances between RoleInstances 
-a.	This traffic will be internal data plane calls that will stay within your APIM subnet. 
-b.	The source IP range will need to be the APIM subnet mask
-c.	The source port range will need to be “*”
-d.	The destination IP range will need to be the APIM subnet mask
-e.	The destination port range will need to be 6381-6383
+
+    - This traffic will be internal data plane calls that will stay within your APIM subnet. 
+    
+    - The source IP range will need to be the APIM subnet mask
+    
+    - The source port range will need to be “*”
+    
+    - The destination IP range will need to be the APIM subnet mask
+    
+    - The destination port range will need to be 6381-6383
 
 4.	Azure Infrastructure Load Balancer
-a.	This traffic will be internal control plane calls that will hit the Azure Internal Load Balancer that provides the private IP endpoint for your APIM Gateway.
-b.	The source IP range will need to be the “AzureLoadBalancer” NSG service tag
-c.	The source port range will need to be “*”
-d.	The destination IP range will need to be the APIM subnet mask
-e.	The destination IP port will need to be “*”
+
+    - This traffic will be internal control plane calls that will hit the Azure Internal Load Balancer that provides the private IP endpoint for your APIM Gateway.
+    
+    - The source IP range will need to be the “AzureLoadBalancer” NSG service tag
+    
+    - The source port range will need to be “*”
+    
+    - The destination IP range will need to be the APIM subnet mask
+    
+    - The destination IP port will need to be “*”
  
 
 
