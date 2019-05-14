@@ -18,7 +18,7 @@ VNet injection carries some key benefits that Enterprise requires for high-secur
 •	It supports NSGs, ASGs, and UDRs by surrounding the PaaS service with a subnet. 
 •	It allows for inbound and outbound security through devices like firewalls, WAF, IDS/IPS, etc. 
 
-Benefits of a Firewall with APIM
+# Benefits of a Firewall with APIM
 For any network service that is tasked with transmitting high security data, protecting this service with a firewall is a must. This can be for both inbound and outbound network traffic flows.  Because APIM is typically a web-based service, you can safeguard your inbound flows using a traditional firewall, a WAF, or any other combination of security platforms that are supported as Network Virtual Appliances (NVAs) within your VNet.  The Azure WAF is one example of a supported inbound security device here. 
 For outbound flow protection, the common motion is to apply User Defined Routes (UDRS) to the delegated subnet to steer traffic though a firewall for inspection, auditing, and logging. For Internet-based/public destinations, you will need to apply a forced tunnel route (0.0.0.0/0) to your delegated subnet.  This makes your firewall to function as the default gateway for your APIM service. 
 Many people will take advantage of “Next-Gen” or application firewalls here, as they provide the ability to filter outbound calls at the fqdn or application-based message level. This functionality is highly recommended to secure your APIM service.  Ideally, your application firewall is situated in your VNet to keep it close to your applications. However, the forced-tunnel route can also be injected via BGP over ExpressRoute or VPN, so your application firewall can live within your corporate network perimeter.  
