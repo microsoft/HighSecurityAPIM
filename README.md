@@ -73,9 +73,16 @@ Per the linked Internal APIM deployment guide, there are two other strategies yo
 # The Essential Architecture
 The best-practice implementation of the high security APIM architecture is provided below. It is provided as a framework to discuss the full inbound and outbound requirements in the following sections. 
 
-1.	An APIM service deployed in a delegated subnet.
+1.  An APIM service deployed in a delegated subnet.
+ 
  a.	Custom DNS will need to be configured prior to APIM VNet Injection 
+ 
  b.	The APIM Gateway should be configured in Internal mode.
+
+
+
+
+
 
 2.	A Routing Table applied to the APIM delegated subnet with these configurations:
 
