@@ -11,6 +11,7 @@ For Enterprise, high security is a must for any application foot print that cont
 VNet Injection uses Azure’s automation and SDN capabilities to deploy a given PaaS service directly into a specific customer VNet that has been configured with a special, delegated subnet for this purpose.  This VNet is typically an extension of the customer’s on-premises private network by way of VPN, ExpressRoute, or both.  The target VNet can be established and does not have to be created at the time of deployment.  The delegated subnet, however, will need to be empty and designated exclusively for the PaaS service prior to deployment. 
 It’s good idea to make sure your subnet mask is no bigger than a /27 (e.g. /28 etc.) due to scale requirements in the future. Also, because a VNet is a flat layer 3 switch, you can always add a new network range to the VNet for this subnet, if need be. Remember, by default, any subnet in a VNet can talk to any other subnet in the same VNet.  NSGs and firewalls are used to curtail this. 
 VNet injection carries some key benefits that Enterprise requires for high-security APIM deployments:
+
 •	It allows for the creation of an APIM Gateway that listens on a private IP within the VNet. 
 •	It supports RFC1918 or custom address space assignment to PaaS nodes and endpoints.  
 •	It allows a PaaS service to talk to other VMs inside of the VNet.
