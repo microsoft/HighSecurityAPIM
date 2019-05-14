@@ -75,9 +75,9 @@ The best-practice implementation of the high security APIM architecture is provi
 
 1.  An APIM service deployed in a delegated subnet.
  
-   a.	Custom DNS will need to be configured prior to APIM VNet Injection 
+•	Custom DNS will need to be configured prior to APIM VNet Injection 
  
-   b.	The APIM Gateway should be configured in Internal mode.
+•	The APIM Gateway should be configured in Internal mode.
 
 
 
