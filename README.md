@@ -73,44 +73,39 @@ Per the linked Internal APIM deployment guide, there are two other strategies yo
 # The Essential Architecture
 The best-practice implementation of the high security APIM architecture is provided below. It is provided as a framework to discuss the full inbound and outbound requirements in the following sections. 
 
-1.  An APIM service deployed in a delegated subnet.
+An APIM service deployed in a delegated subnet.
  
 •	Custom DNS will need to be configured prior to APIM VNet Injection 
  
 •	The APIM Gateway should be configured in Internal mode.
 
+A Routing Table applied to the APIM delegated subnet with these configurations:
 
+•	A set of User-defined routes (UDRs) that steer egress control plane traffic to the Azure backbone using the “Internet” tag. 
 
+•	A set of User-defined routes (UDRs) that steer egress management plane traffic into a private firewall IP using the “Virtual Network Appliance” tag.  
 
+•	A set of User-defined routes that steer egress data plane management traffic into the firewall using the “Virtual Network Appliance” tag. 
 
+•	A User-defined route that points the default gateway of the subnet (0.0.0.0/0) to the firewall using the “Virtual Network Appliance” tag, if your firewall resides in your VNet.  Else, this route will arrive via BGP into the APIM subnet over ExpressRoute or VPN. 
 
-2.	A Routing Table applied to the APIM delegated subnet with these configurations:
+A Network Security Group (NSG) which will curtail inbound access. The best approach is to deny all inbound traffic, from both the Internet and the VNet, then white list the following groups:
 
- a.	A set of User-defined routes (UDRs) that steer egress control plane traffic to the Azure backbone using the “Internet” tag. 
+•	Control plane, management plane, and data plane channels (discussed below in detail)
 
- b.	A set of User-defined routes (UDRs) that steer egress management plane traffic into a private firewall IP using the “Virtual Network Appliance” tag.  
+•	The APIM subnet itself for internal communication
 
- c.	A set of User-defined routes that steer egress data plane management traffic into the firewall using the “Virtual Network Appliance” tag. 
+•	Any private network ranges and ports that will be opening inbound connections to APIM. 
 
- d.	A User-defined route that points the default gateway of the subnet (0.0.0.0/0) to the firewall using the “Virtual Network Appliance” tag, if your firewall resides in your VNet.  Else, this route will arrive via BGP into the APIM subnet over ExpressRoute or VPN. 
+This NSG will also need to restrict outbound access. The best approach here is to deny all outbound traffic, to both the Internet and to the VNet, then white list the following groups:
 
-3.	A Network Security Group (NSG) which will curtail inbound access. The best approach is to deny all inbound traffic, from both the Internet and the VNet, then white list the following groups:
+•	Control plane, management plane, and data plane channels (discussed below in detail)
 
- a.	Control plane, management plane, and data plane channels (discussed below in detail)
+•	The APIM subnet itself for internal communication.
 
- b.	The APIM subnet itself for internal communication
-
- c.	Any private network ranges and ports that will be opening inbound connections to APIM. 
-
-4.	This NSG will also need to restrict outbound access. The best approach here is to deny all outbound traffic, to both the Internet and to the VNet, then white list the following groups:
-
- a.	Control plane, management plane, and data plane channels (discussed below in detail)
-
- b.	The APIM subnet itself for internal communication.
-
- c.	Any private network ranges and ports to which APIM will open outbound connections.
+•	Any private network ranges and ports to which APIM will open outbound connections.
    
-5.	An application firewall in an adjacent subnet or VNet to provide inbound and outbound protection. 
+An application firewall in an adjacent subnet or VNet to provide inbound and outbound protection. 
 Symmetric Routing for Inbound APIM Control Plane Traffic
 
 As we learned, the APIM control plane will be making inbound calls to your APIM delegated subnet, targeting a special management IP hosted by the fabric. This public endpoint will then forward control plane connection requests to the private IPs of your APIM role instances. In order to ensure that responses symmetrically map back to these inbound source IPs, you will need to create a route table and build a set of UDRs to steer traffic back to Azure by setting the destination of these host routes to “Internet”.  The host routes you will need to create are as follows:
