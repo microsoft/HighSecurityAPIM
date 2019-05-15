@@ -304,17 +304,23 @@ Outbound control plane and management plane fqdns for Azure China Cloud
 	prod3.metrics.nsatc.net
 	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
 	Diagnostic Log output: dc.services.visualstudio.com (443)
- 
- 
- 
- 
- 
+
+![alt text](https://github.com/jgmitter/images/blob/master/9.png) 
+![alt text](https://github.com/jgmitter/images/blob/master/10.png) 
+![alt text](https://github.com/jgmitter/images/blob/master/11.png) 
+![alt text](https://github.com/jgmitter/images/blob/master/12.png) 
+![alt text](https://github.com/jgmitter/images/blob/master/13.png) 
+![alt text](https://github.com/jgmitter/images/blob/master/14.png) 
  
 Per-Service FQDNs for APIM
+
 The remainder of the fqdns that your APIM service will use, like for Azure Storage, SQL, EventHub, etc, will be customized per your deployment. To learn them, you will need to call a “Network Status” API post deployment, then add these fqnds into the security policy of your application firewall along with the others listed above. The Network Status API is listed in this solution and also here. 
  
-IMPORTANT: Using ServiceEndpoints with APIM when your Force Tunnel
-Currently, as of this writing, Virtual Network ServiceEndpoints are not supported directly by APIM. However, you can still make good use of them alongside your NVA firewall, and here is why: Without ServiceEndpoints, critical backend traffic between your APIM deployment and Azure will follow your forced tunnel route, which may lead to the subnet just next door, or all the way to your on-premise firewall. 
+![alt text](https://github.com/jgmitter/images/blob/master/15.png) 
+ 
+# IMPORTANT: Using ServiceEndpoints with APIM when your Force Tunnel
+
+Currently, as of this writing, Virtual Network ServiceEndpoints (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview)  are not supported directly by APIM. However, you can still make good use of them alongside your NVA firewall, and here is why: Without ServiceEndpoints, critical backend traffic between your APIM deployment and Azure will follow your forced tunnel route, which may lead to the subnet just next door, or all the way to your on-premise firewall. 
 Technically, your on-premise firewall can in turn forward traffic to backend services like Azure Storage, SQL, and Eventhub back over the Internet and to Azure again, where these PaaS services are listening. However, this can introduce a fair amount of latency and slow down your APIM deployment’s data plane activity.  To avoid this scenario, you will need to move your firewall footprint into an adjacent subnet or VNet, next to your APIM subnet. This design is called a VDMZ or virtual DMZ.
 When you have a NVA firewall living right next door to APIM and then force tunnel to it, a couple of really good things happen:
 1.	You can enable ServiceEndpoints on the firewall’s egress subnet so that network traffic from APIM to the supported backend services (Storage, SQL, and EventHub) will flow directly to your firewall, then directly out of the VNet though Azure’s internal network. This keeps the traffic very secure and makes your round-trip times to your backend very fast! 
