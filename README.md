@@ -299,11 +299,11 @@ Outbound control plane and management plane fqdns for Azure Gov Cloud
 	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
 	Diagnostic Log output: dc.services.visualstudio.com (443)
 Outbound control plane and management plane fqdns for Azure China Cloud
-	mooncake.warmpath.chinacloudapi.cn
-	shoebox2.metrics.nsatc.net
-	prod3.metrics.nsatc.net
-	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
-	Diagnostic Log output: dc.services.visualstudio.com (443)
+    - mooncake.warmpath.chinacloudapi.cn
+    - shoebox2.metrics.nsatc.net
+    - prod3.metrics.nsatc.net
+    - SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
+    - Diagnostic Log output: dc.services.visualstudio.com (443)
 
 ![alt text](https://github.com/jgmitter/images/blob/master/8.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/9.png) 
