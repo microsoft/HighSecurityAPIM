@@ -38,25 +38,25 @@ Many people will take advantage of “Next-Gen” or application firewalls here,
 
 # Understanding Traffic Types in VNet Injected Services
 
-Control Plane
+## Control Plane
 
 When a PaaS service is deployed into a delegated subnet by way of VNet Injection, it will be still be dependent on Azure management services for health checking, reporting, deployment, etc.  This type of traffic is referred to as control plane. It is somewhat confusing, because some will refer to this as “management traffic”, but in reality, this tier maps neatly into what the industry already understands as control plane traffic.  For any given PaaS deployment in a VNet, there will be both outbound calls to, and inbound calls from, these control plane endpoints.
 Extra care needs to be taken here, because the control plane IPs are part of Azure’s own public IP ranges. These IPs will need their own static host routes (i.e. UDRs) to ensure that responses to inbound calls do not follow the forced tunnel route out to the firewall. Else, an asymmetrical response will occur, and the PaaS service will enter a degraded state. This white sheet will supply specific instructions on how to configure these special routes so that a forced tunnel route to a firewall can be supported.
 
-Just how Public is the Control Plane?
+## Just how Public is the Control Plane?
 
 It is critical to note that control plane traffic never leaves Azure’s internal network.  It will enter and leave your PaaS service on special public listeners that do not face the Internet. Control plane communication is strictly internal, Azure-to-Azure communication. These IPs need to be public because the Azure management service tier is multi-regional to withstand the failure of a single region and is often built on other Azure PaaS platforms under the hood.
 In fact, even though you use the UDR tag “Internet” to point your management host routes away from your firewall, this just tells the Azure Network Stack to use the default gateway of the hypervisor host, which lives deep within an Azure data center. It only leads out to the Internet – and out of Azure’s internal network – if the destination is outside of Azure. Else, traffic pointed to the “Internet” tag stays inside of Azure and follows Microsoft dark fiber to its regional destinations. 
 
-Management Plane
+## Management Plane
 
 Management plane is a second kind of traffic that will be part of any PaaS service in a VNet. This type of traffic refers to user defined input that is sent into the PaaS service to configure the service according to a specific, desired outcome. This input can come in through the Azure Portal, PowerShell, Azure Cloud Shell, Visual Studio, or any other number of popular implementation tools, like Ansible, Terraform, etc. This traffic is inbound only and is typically RESTful over HTTPS. Management plane traffic needs to be highly secured in all instances, because it represents the “Keys to the Kingdom” for the IT pros who create and code in these PaaS environments.  Two important management plane platforms for APIM are the Azure portal, and the Developer portal.  However, there are also four special fqdns that provide management plane access for administrators. We will review these in another section below. 
 
-Data Plane
+## Data Plane
 
 The data plane is also referred to end-user traffic, or customer traffic. This is traffic that your end users generate when they access your service for content, to query it, to upload data, and so on. It can also be the traffic that your application generates to talk to other backend services in response to end user input. Thus, the data plane traffic can be both inbound and outbound depending on the application platform and design.
 
-A Word about the Backend
+## A Word about the Backend
 
 A lot of Azure PaaS platforms use both Azure Storage and Azure SQL services to get the job done across all three planes, or some combination of them.  The classification of this backend traffic will need to be performed independently for each PaaS service that supports VNet Injection. For APIM, we will consider traffic to Azure Storage and Azure SQL as both control plane and data plane traffic, as the APIM reads and writes both types of data here. The bulk of the transfer does belong to data plane, however, so from a compliance or DLP perspective, APIM storage and SQL needs to fall into this same regulatory stance. 
 
@@ -67,7 +67,7 @@ Because high-security architectures often require moving endpoints to private ne
 
 The [Internal APIM deployment](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#--routing) guide discusses in detail what will happen to your APIM management plane when you move in behind a private IP in your VNet.  The next section will dive into this in more detail. It is crucial that you read this solution carefully so you know how to design and access your APIM management plane. 
 
-Management endpoints with Internal VNet mode.
+## Management endpoints with Internal VNet mode.
 
 As discussed above, the management plane is how admins and developers come in to configure and view your service.  In addition to the Azure and Developer portals, the following special management fqdns will need to resolve to the APIM private gateway IP, which will be hosting these services:
 
@@ -162,7 +162,7 @@ As we learned, the APIM control plane will be making inbound calls to your APIM 
 
 ![alt text](https://github.com/jgmitter/images/blob/master/17.png) 
 
-A Word About the Future of APIM Control Plane
+## A Word About the Future of APIM Control Plane
 
 Today the APIM control plane uses the four endpoints above for high availability. This range will grow in the future as Azure continues to grow. In the future, is possible that some control plane functions for your APIM deployment will dynamically shift to a new IP which is not listed above. If this happens, your first motion will be to open a support ticket and add the new host routes in to your Route Table.  Any disturbance to your control plane will not impact your other planes, and your end-user traffic will not be affected. 
 
@@ -380,7 +380,7 @@ Let’s map the “Purpose” column to the three traffic types we have discusse
  
 ![alt text](https://github.com/jgmitter/images/blob/master/7.png)
 
-Benefits of an Outbound Application Firewall
+## Benefits of an Outbound Application Firewall
 
 It is important to note that outbound IP destinations listed above are public IPs, and all of them belong to Microsoft. Thus, while you will need to open ACLs to “Internet” for things like SMTP and Diagnostics, the endpoints themselves are trusted Microsoft Public IPs.  Still, many high security deployments benefit from further inspection of outbound traffic at the application level – fqdns and hostnames, for example – to ensure that the destination of outbound connection requests are trusted endpoints, and not some unknown URL that could be due to fault in code, or worse. 
 
@@ -439,7 +439,7 @@ Outbound control plane and management plane fqdns for Azure China Cloud
 ![alt text](https://github.com/jgmitter/images/blob/master/12.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/14.png) 
  
-Per-Service FQDNs for APIM
+## Per-Service FQDNs for APIM
 
 The remainder of the fqdns that your APIM service will use, like for Azure Storage, SQL, EventHub, etc, will be customized per your deployment. To learn them, you will need to call a “Network Status” API post deployment, then add these fqnds into the security policy of your application firewall along with the others listed above. The Network Status API is listed in this solution and also here. 
  
