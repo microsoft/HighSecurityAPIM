@@ -60,12 +60,12 @@ A Word about the Backend
 
 A lot of Azure PaaS platforms use both Azure Storage and Azure SQL services to get the job done across all three planes, or some combination of them.  The classification of this backend traffic will need to be performed independently for each PaaS service that supports VNet Injection. For APIM, we will consider traffic to Azure Storage and Azure SQL as both control plane and data plane traffic, as the APIM reads and writes both types of data here. The bulk of the transfer does belong to data plane, however, so from a compliance or DLP perspective, APIM storage and SQL needs to fall into this same regulatory stance. 
 
-# Internal vs External APIM 
+# Internal vs External APIM [GitHub Pages]
 
-When you deploy APIM into your VNet (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet), you will have the choice of placing your APIM Gateway behind a Public Azure Load Balancer IP (External), or behind an Internal Azure Load Balancer IP (Internal). The setting that actually determines this outcome is found under the “Virtual Network” settings of your APIM. You will see a choice of “External” or “Internal” for your VNet deployment.  In either case, the actual APIM nodes themselves are build using private IPs from the subnet. 
+When you deploy [APIM into your VNET](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet), you will have the choice of placing your APIM Gateway behind a Public Azure Load Balancer IP (External), or behind an Internal Azure Load Balancer IP (Internal). The setting that actually determines this outcome is found under the “Virtual Network” settings of your APIM. You will see a choice of “External” or “Internal” for your VNet deployment.  In either case, the actual APIM nodes themselves are build using private IPs from the subnet. 
 Because high-security architectures often require moving endpoints to private network space and placing a firewall in front of the service, the “Internal” VNet mode is the ideal choice here.  For hybrid motions, this Internal Gateway IP will be accessible over VPN and or ExpressRoute, such that on-prem clients do not have to use the Internet to contact your APIM Gateway. 
 
-The Internal APIM deployment (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#--routing) guide discusses in detail what will happen to your APIM management plane when you move in behind a private IP in your VNet.  The next section will dive into this in more detail. It is crucial that you read this solution carefully so you know how to design and access your APIM management plane. 
+The [Internal APIM deployment](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#--routing) guide discusses in detail what will happen to your APIM management plane when you move in behind a private IP in your VNet.  The next section will dive into this in more detail. It is crucial that you read this solution carefully so you know how to design and access your APIM management plane. 
 
 Management endpoints with Internal VNet mode.
 
@@ -82,7 +82,7 @@ As discussed above, the management plane is how admins and developers come in to
 
 ![alt text](https://github.com/jgmitter/images/blob/master/1.png) 
 
-You will need to set up a custom DNS solution for these four fdqns such that the A record for each of these hostnames will resolve to the private IP address of the APIM Gateway. The hostnames above are required in the HTTP request, such that the client will pass the correct hostname value to the APIM Gateway to forward to the right backend service. This solution (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances) does a great job of outlining how to set up custom DNS in Azure.  Note you should set up the custom DNS service prior to deploying APIM into the VNet, so your management calls work correctly post-deployment.
+You will need to set up a custom DNS solution for these four fdqns such that the A record for each of these hostnames will resolve to the private IP address of the APIM Gateway. The hostnames above are required in the HTTP request, such that the client will pass the correct hostname value to the APIM Gateway to forward to the right backend service. This [solution](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances) does a great job of outlining how to set up custom DNS in Azure.  Note you should set up the custom DNS service prior to deploying APIM into the VNet, so your management calls work correctly post-deployment.
 
 Per the linked Internal APIM deployment guide, there are two other strategies you can use to simplify your DNS configuration:
 
@@ -94,14 +94,14 @@ Per the linked Internal APIM deployment guide, there are two other strategies yo
 
 The best-practice implementation of the high security APIM architecture is provided below. It is provided as a framework to discuss the full inbound and outbound requirements in the following sections. 
 
-1. An APIM service deployed in a delegated subnet (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet):
+1. An APIM service deployed in a [delegated subnet](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet):
  
-    - Custom DNS (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-
+    - [Custom DNS](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-
     instances#name-resolution-that-uses-your-own-dns-server)  will need to be configured prior to APIM VNet Injection 
  
     - The APIM Gateway should be configured in Internal mode.
 
-2. A Routing Table (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#custom-routes) applied to the APIM delegated subnet with these configurations:
+2. [A routing table](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview#custom-routes) applied to the APIM delegated subnet with these configurations:
 
     - A set of User-defined routes (UDRs) that steer egress control plane traffic to the Azure backbone using the “Internet” tag. 
 
@@ -115,7 +115,7 @@ The best-practice implementation of the high security APIM architecture is provi
     Appliance” tag, if your firewall resides in your VNet.  Else, this route will arrive via BGP into the APIM subnet over ExpressRoute 
     or VPN. 
 
-3. A Network Security Group (NSG, https://docs.microsoft.com/en-us/azure/virtual-network/security-overview)  which will curtail inbound access. The best approach is to deny all inbound traffic, from both the Internet and the VNet, then white list the following groups:
+3. A [Network Security Group](https://docs.microsoft.com/en-us/azure/virtual-network/security-overview)  which will curtail inbound access. The best approach is to deny all inbound traffic, from both the Internet and the VNet, then white list the following groups:
 
     - Control plane, management plane, and data plane channels (discussed below in detail)
 
@@ -171,7 +171,7 @@ To address this issue, Microsoft Azure is developing a special route tag that wi
 
 # Security for Inbound APIM Traffic
 
-When planning your high security deployment, it is essential to understand all the inbound sources and channels so that you can implement your routes, and NSGs, and firewall rules for maximum security. Here are the inbound services (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) that will be calling to your APIM subnet:
+When planning your high security deployment, it is essential to understand all the inbound sources and channels so that you can implement your routes, and NSGs, and firewall rules for maximum security. Here are the [inbound services](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) that will be calling to your APIM subnet:
  
 ![alt text](https://github.com/jgmitter/images/blob/master/2.png) 
 
@@ -259,7 +259,7 @@ For steering outbound connection requests from your APIM deployment though an NV
  
 # Security for Outbound APIM Traffic
 
-Here are the outbound destinations (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) that APIM will need to access through your NSG. We will discuss each one in more detail:
+Here are the [outbound destinations](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) that APIM will need to access through your NSG. We will discuss each one in more detail:
  
 ![alt text](https://github.com/jgmitter/images/blob/master/6.png) 
  
@@ -385,7 +385,7 @@ Benefits of an Outbound Application Firewall
 
 It is important to note that outbound IP destinations listed above are public IPs, and all of them belong to Microsoft. Thus, while you will need to open ACLs to “Internet” for things like SMTP and Diagnostics, the endpoints themselves are trusted Microsoft Public IPs.  Still, many high security deployments benefit from further inspection of outbound traffic at the application level – fqdns and hostnames, for example – to ensure that the destination of outbound connection requests are trusted endpoints, and not some unknown URL that could be due to fault in code, or worse. 
 
-Fortunately, all of the outbound services above carry known fqdns that we can use for just such a purpose.  Most are printed in this solution (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) and will need to be added to your application firewall’s outbound security settings for application level (layer7) whitelisting.  I add them here for your convenience: 
+Fortunately, all of the outbound services above carry known fqdns that we can use for just such a purpose.  Most are printed in this [solution](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) and will need to be added to your application firewall’s outbound security settings for application level (layer7) whitelisting.  I add them here for your convenience: 
 
 Outbound control plane and management plane fqdns for Azure Consumer Cloud
 
@@ -448,15 +448,18 @@ The remainder of the fqdns that your APIM service will use, like for Azure Stora
  
 # IMPORTANT: Using ServiceEndpoints with APIM when your Force Tunnel
 
-Currently, as of this writing, Virtual Network ServiceEndpoints (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview)  are not supported directly by APIM. However, you can still make good use of them alongside your NVA firewall, and here is why: Without ServiceEndpoints, critical backend traffic between your APIM deployment and Azure will follow your forced tunnel route, which may lead to the subnet just next door, or all the way to your on-premise firewall. 
+Currently, as of this writing, [Service Endpoints](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview)  are not supported directly by APIM. However, you can still make good use of them alongside your NVA firewall, and here is why: Without ServiceEndpoints, critical backend traffic between your APIM deployment and Azure will follow your forced tunnel route, which may lead to the subnet just next door, or all the way to your on-premise firewall. 
+
 Technically, your on-premise firewall can in turn forward traffic to backend services like Azure Storage, SQL, and Eventhub back over the Internet and to Azure again, where these PaaS services are listening. However, this can introduce a fair amount of latency and slow down your APIM deployment’s data plane activity.  To avoid this scenario, you will need to move your firewall footprint into an adjacent subnet or VNet, next to your APIM subnet. This design is called a VDMZ or virtual DMZ.
+
 When you have a NVA firewall living right next door to APIM and then force tunnel to it, a couple of really good things happen:
+
 1.	You can enable ServiceEndpoints on the firewall’s egress subnet so that network traffic from APIM to the supported backend services (Storage, SQL, and EventHub) will flow directly to your firewall, then directly out of the VNet though Azure’s internal network. This keeps the traffic very secure and makes your round-trip times to your backend very fast! 
  
-
 ![alt text](https://github.com/jgmitter/images/blob/master/16.png) 
  
 2.	For those control plane and management plane IPs are not supported by Service Endpoints, you can still use Azure’s “Internet” path on the egress NIC of your firewall to keep all that traffic on the Azure backbone. This will have the same outcome – your critical control plane and management plane traffic stays in Azure and reaps the benefit of security and speed. 
+
 For these reasons, the high security APIM deployment really benefits from a VDMZ, as opposed to a forced tunnel route to an on-prem firewall. 
 
 # Tips for Deploying your High Security APIM
@@ -465,7 +468,7 @@ For these reasons, the high security APIM deployment really benefits from a VDMZ
 
 2.	Next, create the delegated subnet for your APIM in your target VNet. /29 is the smallest supported size but /27 is highly recommended.
 
-3.	Next, set up custom DNS in the APIM VNet as discussed in the Internal APIM deployment guide (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-internal-vnet). 
+3.	Next, set up custom DNS in the APIM VNet as discussed in the [Internal APIM Deployment Guide](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-internal-vnet). 
 
 4.	Deploy your APIM into the subnet and set your VNet mode to “Internal”
 
