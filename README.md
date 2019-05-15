@@ -305,11 +305,11 @@ Outbound control plane and management plane fqdns for Azure China Cloud
 	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
 	Diagnostic Log output: dc.services.visualstudio.com (443)
 
+![alt text](https://github.com/jgmitter/images/blob/master/8.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/9.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/10.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/11.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/12.png) 
-![alt text](https://github.com/jgmitter/images/blob/master/13.png) 
 ![alt text](https://github.com/jgmitter/images/blob/master/14.png) 
  
 Per-Service FQDNs for APIM
