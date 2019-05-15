@@ -211,76 +211,128 @@ Security for Outbound APIM Traffic
 Here are the outbound destinations that APIM will need to access through your NSG. We will discuss each one in more detail:
  
 Let’s map the “Purpose” column to the three traffic types we have discussed for a better understanding of how to build the NSG on your APIM delegated subnet for outbound security:
+
 1.	Dependency on Azure Storage
-a.	This will allow outbound data plane and control plane traffic to the dedicated Azure Storage tier for your APIM deployment
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “80” and “443”
-e.	The destination IP range will need to be the NSG service tag “Storage.” It is best if you use the global tag in the event APIM needs to connect to back up storage in another region.
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
+
+    - This will allow outbound data plane and control plane traffic to the dedicated Azure Storage tier for your APIM deployment
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “80” and “443”
+
+    - The destination IP range will need to be the NSG service tag “Storage.” It is best if you use the global tag in the event APIM needs to connect to back up storage in another region.
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
 
 2.	  Azure Active Directory
-a.	This will allow outbound management plane traffic for admin and user authentication.
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “80” and “443”
-e.	The destination IP range will need to be the NSG service tag “AzureActiveDiretory”
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
+
+    - This will allow outbound management plane traffic for admin and user authentication.
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “80” and “443”
+
+    - The destination IP range will need to be the NSG service tag “AzureActiveDiretory”
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
  
 3.	Access to Azure SQL endpoints
-a.	This will allow outbound data plane and control plane traffic to Azure SQL.
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “1433”
-e.	The destination IP range will need to be the NSG service tag “SQL.” It is best if you use the global tag in the event APIM needs to connect to back up SQL in another region.
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
+
+    - This will allow outbound data plane and control plane traffic to Azure SQL.
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “1433”
+
+    - The destination IP range will need to be the NSG service tag “SQL.” It is best if you use the global tag in the event APIM needs 
+    to connect to back up SQL in another region.
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
 
 4.	Dependency for Log to Event Hub policy and monitoring agent.
-a.	Logging and monitoring traffic is part of parcel of the APIC management plane.
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “80” and “443”
-e.	The destination IP range will need to be the NSG service tag “EventHub”. 
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
 
+    - Logging and monitoring traffic is part of parcel of the APIC management plane.
 
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “80” and “443”
+
+    - The destination IP range will need to be the NSG service tag “EventHub”. 
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
 
 5.	Dependency on Azure File Share for GIT
-a.	The handling of code updates to/from GIT is part of the management plane for APIM
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “445”.
-e.	The destination IP range will need to be the NSG service tag “Storage.” It is best if you use the global tag in the event APIM needs to connect to back up storage in another region.
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
+
+    - The handling of code updates to/from GIT is part of the management plane for APIM
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “445”.
+
+    - The destination IP range will need to be the NSG service tag “Storage.” It is best if you use the global tag in the event APIM 
+    needs to connect to back up storage in another region.
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
  
 6.	Health status to Resource Health
-a.	Health status reporting will be initiated by each role instance inside of your APIM subnet and will be part of the APIM control plane
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “1886”.
-e.	The destination IP range will need to be set to the NSG service tag “Internet”
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
+    - Health status reporting will be initiated by each role instance inside of your APIM subnet and will be part of the APIM control 
+    plane
+    
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “1886”.
+
+    - The destination IP range will need to be set to the NSG service tag “Internet”
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level.
  
 7.	Publish Diagnostics Logs and Metrics
-a.	APIM Logs and Metrics for consumption by admins and your IT team are all part of the management plane. 
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “443”.
-e.	The destination IP range will need to be set to the NSG service tag “AzureMonitor”
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
+
+    - APIM Logs and Metrics for consumption by admins and your IT team are all part of the management plane. 
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “443”.
+
+    - The destination IP range will need to be set to the NSG service tag “AzureMonitor”
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
 
 8.	Connect to SMTP Relay for sending e-mails (25, 587, 25028)
-a.	APIM features the ability to generate email traffic as part of the data plane and the management plane. 
-b.	The source port range will need to be “*”
-c.	The source IP range will need to be the subnet range of your APIM deployment
-d.	The destination port range will need to be “25”, “587”, and “25028”
-e.	The destination IP range will need to be set to the NSG service tag “Internet”
-f.	This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
+
+    - APIM features the ability to generate email traffic as part of the data plane and the management plane. 
+
+    - The source port range will need to be “*”
+
+    - The source IP range will need to be the subnet range of your APIM deployment
+
+    - The destination port range will need to be “25”, “587”, and “25028”
+
+    - The destination IP range will need to be set to the NSG service tag “Internet”
+
+    - This traffic will follow the forced tunnel route out to your firewall and can be further protected at the application/fqdn level. 
  
+![alt text](https://github.com/jgmitter/images/blob/master/7.png)
 
 Benefits of an Outbound Application Firewall
+
 It is important to note that outbound IP destinations listed above are public IPs, and all of them belong to Microsoft. Thus, while you will need to open ACLs to “Internet” for things like SMTP and Diagnostics, the endpoints themselves are trusted Microsoft Public IPs.  Still, many high security deployments benefit from further inspection of outbound traffic at the application level – fqdns and hostnames, for example – to ensure that the destination of outbound connection requests are trusted endpoints, and not some unknown URL that could be due to fault in code, or worse. 
-Fortunately, all of the outbound services above carry known fqdns that we can use for just such a purpose.  Most are printed in this solution and will need to be added to your application firewall’s outbound security settings for application level (layer7) whitelisting.  I add them here for your convenience: 
+
+Fortunately, all of the outbound services above carry known fqdns that we can use for just such a purpose.  Most are printed in this solution (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet#a-namenetwork-configuration-issues-acommon-network-configuration-issues) and will need to be added to your application firewall’s outbound security settings for application level (layer7) whitelisting.  I add them here for your convenience: 
 
 Outbound control plane and management plane fqdns for Azure Consumer Cloud
 
