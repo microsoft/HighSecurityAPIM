@@ -320,7 +320,7 @@ When you have a NVA firewall living right next door to APIM and then force tunne
 1.	You can enable ServiceEndpoints on the firewall’s egress subnet so that network traffic from APIM to the supported backend services (Storage, SQL, and EventHub) will flow directly to your firewall, then directly out of the VNet though Azure’s internal network. This keeps the traffic very secure and makes your round-trip times to your backend very fast! 
  
 
-![alt text](https://github.com/jgmitter/images/blob/master/16.PNG) 
+![alt text](https://github.com/jgmitter/images/blob/master/16.png) 
  
 2.	For those control plane and management plane IPs are not supported by Service Endpoints, you can still use Azure’s “Internet” path on the egress NIC of your firewall to keep all that traffic on the Azure backbone. This will have the same outcome – your critical control plane and management plane traffic stays in Azure and reaps the benefit of security and speed. 
 For these reasons, the high security APIM deployment really benefits from a VDMZ, as opposed to a forced tunnel route to an on-prem firewall. 
