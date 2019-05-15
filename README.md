@@ -320,15 +320,25 @@ When you have a NVA firewall living right next door to APIM and then force tunne
 1.	You can enable ServiceEndpoints on the firewall’s egress subnet so that network traffic from APIM to the supported backend services (Storage, SQL, and EventHub) will flow directly to your firewall, then directly out of the VNet though Azure’s internal network. This keeps the traffic very secure and makes your round-trip times to your backend very fast! 
  
 
+![alt text](https://github.com/jgmitter/images/blob/master/16.PNG) 
+ 
 2.	For those control plane and management plane IPs are not supported by Service Endpoints, you can still use Azure’s “Internet” path on the egress NIC of your firewall to keep all that traffic on the Azure backbone. This will have the same outcome – your critical control plane and management plane traffic stays in Azure and reaps the benefit of security and speed. 
 For these reasons, the high security APIM deployment really benefits from a VDMZ, as opposed to a forced tunnel route to an on-prem firewall. 
-Tips for Deploying your High Security APIM
+
+# Tips for Deploying your High Security APIM
+
 1.	Deploy your VDMZ tier if you are going to use an NVA firewall
+
 2.	Next, create the delegated subnet for your APIM in your target VNet. /29 is the smallest supported size but /27 is highly recommended.
-3.	Next, set up custom DNS in the APIM VNet as discussed in the Internal APIM deployment guide. 
+
+3.	Next, set up custom DNS in the APIM VNet as discussed in the Internal APIM deployment guide (https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-internal-vnet). 
+
 4.	Deploy your APIM into the subnet and set your VNet mode to “Internal”
+
 5.	Prepare your application firewall with the right outbound and inbound policy
+
 6.	Set up your route table correctly and apply it your APIM subnet
+
 7.	Set up your NSG for inbound and outbound correctly and apply it to our APIM subnet. 
 
 
