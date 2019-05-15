@@ -281,28 +281,51 @@ f.	This traffic will follow the forced tunnel route out to your firewall and can
 Benefits of an Outbound Application Firewall
 It is important to note that outbound IP destinations listed above are public IPs, and all of them belong to Microsoft. Thus, while you will need to open ACLs to “Internet” for things like SMTP and Diagnostics, the endpoints themselves are trusted Microsoft Public IPs.  Still, many high security deployments benefit from further inspection of outbound traffic at the application level – fqdns and hostnames, for example – to ensure that the destination of outbound connection requests are trusted endpoints, and not some unknown URL that could be due to fault in code, or worse. 
 Fortunately, all of the outbound services above carry known fqdns that we can use for just such a purpose.  Most are printed in this solution and will need to be added to your application firewall’s outbound security settings for application level (layer7) whitelisting.  I add them here for your convenience: 
+
 Outbound control plane and management plane fqdns for Azure Consumer Cloud
-	prod.warmpath.msftcloudes.com
-	shoebox2.metrics.nsatc.net
-	prod3.metrics.nsatc.net
-	prod3-black.prod3.metrics.nsatc.net
-	prod3-red.prod3.metrics.nsatc.net
-	prod.warm.ingestion.msftcloudes.com
-	[azure region].prod.warm.ingestion.msftcloudes.com
-o	where [East US 2] is eastus2.prod.warm.ingestion.msftcloudes.com
-	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
-	Diagnostic Log output: dc.services.visualstudio.com (443)
-Outbound control plane and management plane fqdns for Azure Gov Cloud
-	fairfax.warmpath.usgovcloudapi.net
-	shoebox2.metrics.nsatc.net
-	prod3.metrics.nsatc.net
-	SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
-	Diagnostic Log output: dc.services.visualstudio.com (443)
-Outbound control plane and management plane fqdns for Azure China Cloud
-    - mooncake.warmpath.chinacloudapi.cn
+
+    - prod.warmpath.msftcloudes.com
+
     - shoebox2.metrics.nsatc.net
+    
     - prod3.metrics.nsatc.net
+
+    - prod3-black.prod3.metrics.nsatc.net
+
+    - prod3-red.prod3.metrics.nsatc.net
+
+    - prod.warm.ingestion.msftcloudes.com
+
+    - [azure region].prod.warm.ingestion.msftcloudes.com
+
+        - where [East US 2] is eastus2.prod.warm.ingestion.msftcloudes.com
+
     - SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
+
+    - Diagnostic Log output: dc.services.visualstudio.com (443)
+
+Outbound control plane and management plane fqdns for Azure Gov Cloud
+
+    - fairfax.warmpath.usgovcloudapi.net
+    
+    - shoebox2.metrics.nsatc.net
+
+    - prod3.metrics.nsatc.net
+
+    - SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
+
+    - Diagnostic Log output: dc.services.visualstudio.com (443)
+
+Outbound control plane and management plane fqdns for Azure China Cloud
+
+    - mooncake.warmpath.chinacloudapi.cn
+    
+    - shoebox2.metrics.nsatc.net
+    
+    - prod3.metrics.nsatc.net
+    
+    - SMTP Relay: ies.global.microsoft.com (25, 587, 25028)
+    
     - Diagnostic Log output: dc.services.visualstudio.com (443)
 
 ![alt text](https://github.com/jgmitter/images/blob/master/8.png) 
