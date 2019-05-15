@@ -97,7 +97,7 @@ The best-practice implementation of the high security APIM architecture is provi
 1. An APIM service deployed in a [delegated subnet](https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet):
  
     - [Custom DNS](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-
-    instances#name-resolution-that-uses-your-own-dns-server)  will need to be configured prior to APIM VNet Injection 
+instances#name-resolution-that-uses-your-own-dns-server)  will need to be configured prior to APIM VNet Injection 
  
     - The APIM Gateway should be configured in Internal mode.
 
